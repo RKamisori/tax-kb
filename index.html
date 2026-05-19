@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#a83232">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="税务知识库">
+<meta name="description" content="企业高频疑难税务问题知识库，基于魏禾《900例》框架整理，支持离线访问">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect width='180' height='180' rx='36' fill='%23a83232'/%3E%3Ctext x='90' y='118' font-size='96' text-anchor='middle' fill='white' font-family='serif'%3E税%3C/text%3E%3C/svg%3E">
+<title>企业高频疑难税务问题知识库 · 基于《魏禾900例》框架</title>
+<style>
+  :root{
+    --bg:#f5f1e8;
+    --bg-2:#ebe4d2;
+    --ink:#2b2722;
+    --ink-soft:#6b6358;
+    --accent:#a83232;
+    --accent-2:#c87533;
+    --gold:#b8924a;
+    --line:#d9cfb8;
+    --card:#fffdf7;
+    --shadow:0 2px 8px rgba(60,40,20,.08), 0 12px 32px rgba(60,40,20,.06);
+    --shadow-hover:0 4px 14px rgba(60,40,20,.12), 0 18px 44px rgba(60,40,20,.10);
+    --sidebar-w:260px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",serif;
+    background:var(--bg);
+    color:var(--ink);
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(168,50,50,.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 100%, rgba(200,117,51,.04) 0%, transparent 40%);
+    min-height:100vh;
+  }
+
+  /* ========== 左侧大纲 ========== */
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
+    background:var(--card);border-right:1px solid var(--line);
+    overflow-y:auto;z-index:10;box-shadow:2px 0 12px rgba(60,40,20,.04);
+    transition:transform .25s ease, width .25s ease;
+  }
+  body.sidebar-hidden .sidebar{transform:translateX(-100%)}
+  body.sidebar-hidden .main{margin-left:0}
+  .main{transition:margin-left .25s ease}
+
+  /* 收起/展开按钮（PC 端） */
+  .sidebar-collapse{
+    position:fixed;top:18px;z-index:30;
+    left:calc(var(--sidebar-w) - 14px);
+    width:28px;height:28px;border-radius:50%;
+    background:var(--card);border:1.5px solid var(--line);color:var(--ink-soft);
+    cursor:pointer;font-size:14px;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(60,40,20,.1);
+    transition:left .25s ease, background .15s, color .15s, border-color .15s;
+  }
+  .sidebar-collapse:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  body.sidebar-hidden .sidebar-collapse{left:14px}
+  @media (max-width:880px){.sidebar-collapse{display:none}}
+  .sidebar-header{
+    padding:20px 18px 14px;border-bottom:1px solid var(--line);
+    position:sticky;top:0;background:var(--card);z-index:2;
+  }
+  .sidebar-header .logo-row{display:flex;align-items:center;gap:10px}
+  .sidebar-header .mini-logo{
+    width:34px;height:34px;border-radius:8px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;
+    font-family:"STKaiti","KaiTi",serif;font-weight:700;
+    box-shadow:0 3px 8px rgba(168,50,50,.25);
+  }
+  .sidebar-header .title{font-size:14px;font-weight:700;letter-spacing:.5px;line-height:1.3}
+  .sidebar-header .subtitle{font-size:11px;color:var(--ink-soft);margin-top:8px;letter-spacing:.3px}
+  .sidebar-header .total-pill{
+    display:inline-block;margin-top:8px;padding:2px 10px;
+    background:var(--bg-2);color:var(--accent);
+    border-radius:10px;font-size:11px;font-weight:600;
+  }
+  .outline-nav{padding:8px 0 20px}
+  .outline-group{margin:4px 0}
+  .outline-cat{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:9px 18px;cursor:pointer;font-size:13px;font-weight:600;
+    color:var(--ink);user-select:none;transition:background .15s;
+  }
+  .outline-cat:hover{background:var(--bg-2)}
+  .outline-cat .arrow{
+    transition:transform .2s;font-size:10px;color:var(--ink-soft);
+  }
+  .outline-cat.collapsed .arrow{transform:rotate(-90deg)}
+  .outline-cat .cat-count{
+    font-size:10px;color:var(--ink-soft);background:var(--bg-2);
+    padding:1px 7px;border-radius:8px;margin-left:6px;
+  }
+  .outline-cat .cat-left{display:flex;align-items:center;gap:8px}
+  .outline-cat .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--accent);
+  }
+  .outline-items{padding:2px 0 6px}
+  .outline-cat.collapsed + .outline-items{display:none}
+  .outline-item{
+    padding:6px 18px 6px 33px;cursor:pointer;font-size:12px;
+    color:var(--ink-soft);line-height:1.5;
+    border-left:2px solid transparent;transition:all .15s;
+    display:flex;gap:6px;align-items:flex-start;
+  }
+  .outline-item:hover{background:var(--bg);color:var(--ink);border-left-color:var(--gold)}
+  .outline-item.active{background:var(--bg-2);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  .outline-item .num{
+    font-family:"Courier New",monospace;font-size:10px;color:var(--gold);
+    flex-shrink:0;padding-top:1px;
+  }
+
+  /* ========== 主体 ========== */
+  .main{margin-left:var(--sidebar-w);padding:32px 28px 80px}
+  .wrap{max-width:1200px;margin:0 auto}
+
+  .hero{
+    display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;
+    padding:24px 30px;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:"税";position:absolute;right:-20px;top:-40px;font-size:200px;
+    font-family:"STKaiti","KaiTi",serif;color:rgba(168,50,50,.05);font-weight:700;
+    pointer-events:none;line-height:1;
+  }
+  .hero h1{margin:0 0 6px;font-size:22px;letter-spacing:1px;font-weight:700}
+  .hero .sub{color:var(--ink-soft);font-size:13px;letter-spacing:.5px}
+  .hero .sub b{color:var(--accent);font-weight:600}
+  .stats{display:flex;gap:14px;flex-shrink:0;z-index:1}
+  .stat{text-align:center;padding:8px 14px;background:var(--bg-2);border-radius:10px;min-width:64px}
+  .stat .num{font-size:20px;font-weight:700;color:var(--accent);line-height:1}
+  .stat .lbl{font-size:11px;color:var(--ink-soft);margin-top:4px;letter-spacing:.5px}
+
+  .toolbar{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .search-box{flex:1;min-width:280px;position:relative}
+  .search-box input{
+    width:100%;padding:13px 18px 13px 44px;font-size:14px;
+    border:1.5px solid var(--line);background:var(--card);color:var(--ink);
+    border-radius:10px;outline:none;transition:all .2s;
+    font-family:inherit;
+  }
+  .search-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(168,50,50,.1)}
+  .search-box::before{
+    content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    font-size:15px;opacity:.6;
+  }
+  .clear-btn{
+    padding:13px 18px;background:var(--ink);color:#fff;border:none;border-radius:10px;
+    cursor:pointer;font-family:inherit;font-size:13px;transition:all .2s;
+  }
+  .clear-btn:hover{background:var(--accent)}
+
+  .filters{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .filter-label{font-size:13px;color:var(--ink-soft);margin-right:4px;letter-spacing:.5px}
+  .tag{
+    padding:6px 14px;background:var(--card);border:1.5px solid var(--line);
+    border-radius:20px;cursor:pointer;font-size:13px;color:var(--ink-soft);
+    transition:all .15s;user-select:none;font-family:inherit;
+  }
+  .tag:hover{border-color:var(--accent);color:var(--accent)}
+  .tag.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .tag .count{opacity:.7;margin-left:4px;font-size:11px}
+
+  .grid{margin-top:22px;columns:3 300px;column-gap:14px}
+  body.sidebar-hidden .grid{columns:4 280px}
+  @media (max-width:1100px){.main{padding:24px 18px 80px}.grid{columns:2 280px}}
+  @media (max-width:880px){
+    .sidebar{transform:translateX(-100%);transition:transform .25s}
+    .sidebar.show{transform:translateX(0)}
+    .main{margin-left:0;padding:60px 16px 80px}
+    .menu-toggle{display:flex !important}
+    .grid{columns:1}
+  }
+  .menu-toggle{
+    display:none;position:fixed;top:14px;left:14px;z-index:20;
+    width:42px;height:42px;border-radius:10px;background:var(--accent);color:#fff;
+    border:none;font-size:20px;cursor:pointer;box-shadow:var(--shadow);
+    align-items:center;justify-content:center;
+  }
+
+  .card{
+    break-inside:avoid;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:16px 18px;margin-bottom:14px;
+    box-shadow:var(--shadow);cursor:pointer;transition:all .2s;
+    display:inline-block;width:100%;position:relative;
+  }
+  .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--gold)}
+  .card-no{
+    position:absolute;top:13px;right:15px;font-size:10px;color:var(--ink-soft);
+    font-family:"Courier New",monospace;letter-spacing:.5px;
+  }
+  .card-cat{
+    display:inline-block;padding:2px 9px;background:var(--bg-2);color:var(--accent);
+    border-radius:10px;font-size:11px;font-weight:600;letter-spacing:.5px;
+    margin-bottom:9px;
+  }
+  .card h3{
+    margin:0 0 9px;font-size:14px;line-height:1.5;font-weight:600;
+    padding-right:48px;
+  }
+  .card .q{
+    font-size:12.5px;color:var(--ink-soft);line-height:1.65;margin:0 0 10px;
+    border-left:3px solid var(--accent);padding-left:9px;
+  }
+  .card .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .card .tags span{
+    font-size:10.5px;padding:2px 7px;background:var(--bg);color:var(--ink-soft);
+    border-radius:8px;border:1px solid var(--line);
+  }
+  .card .more{margin-top:8px;font-size:11.5px;color:var(--accent);font-weight:600}
+
+  .empty{text-align:center;padding:80px 20px;color:var(--ink-soft);column-span:all}
+  .empty .emoji{font-size:48px;margin-bottom:12px}
+
+  /* ========== 模态框 ========== */
+  .modal{
+    display:none;position:fixed;inset:0;background:rgba(20,15,10,.6);
+    z-index:100;align-items:flex-start;justify-content:center;padding:40px 16px;
+    overflow-y:auto;backdrop-filter:blur(4px);
+  }
+  .modal.show{display:flex}
+  .modal-content{
+    background:var(--card);max-width:760px;width:100%;border-radius:14px;
+    padding:32px 36px 36px;box-shadow:0 20px 60px rgba(0,0,0,.3);
+    position:relative;animation:slideUp .25s ease-out;
+  }
+  @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-actions{
+    position:absolute;top:16px;right:18px;display:flex;gap:10px;align-items:center;
+  }
+  .action-btn{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    padding:3px 12px 3px 10px;
+    border-radius:999px;
+    cursor:pointer;
+    font-size:11.5px;
+    font-family:inherit;
+    line-height:1.4;
+    transition:all .18s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    letter-spacing:.3px;
+  }
+  .action-btn:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+    background:rgba(168,50,50,.04);
+  }
+  .action-btn .ico{font-size:12px;line-height:1;opacity:.85}
+  .action-btn:hover .ico{opacity:1}
+  .action-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .close-x{
+    background:none;border:none;font-size:26px;cursor:pointer;color:var(--ink-soft);
+    line-height:1;padding:0 4px;
+  }
+  .close-x:hover{color:var(--accent)}
+  .modal h2{margin:0 0 8px;font-size:22px;padding-right:110px;line-height:1.4}
+  .modal .modal-cat{
+    display:inline-block;padding:3px 12px;background:var(--accent);color:#fff;
+    border-radius:12px;font-size:12px;font-weight:600;margin-right:8px;
+  }
+  .modal .modal-no{font-size:12px;color:var(--ink-soft);font-family:"Courier New",monospace}
+  .modal section{margin-top:22px}
+  .modal h4{
+    margin:0 0 10px;font-size:14px;color:var(--accent);letter-spacing:1px;
+    font-weight:700;display:flex;align-items:center;gap:8px;
+  }
+  .modal h4::before{content:"";width:4px;height:14px;background:var(--accent);border-radius:2px}
+  .modal section p,.modal section li{
+    font-size:14px;line-height:1.85;color:var(--ink);margin:0 0 8px;
+  }
+  .modal section ul{margin:0;padding-left:20px}
+  .modal .law{
+    background:var(--bg-2);padding:12px 16px;border-radius:8px;
+    font-size:13px;color:var(--ink);line-height:1.7;
+    border-left:3px solid var(--gold);
+  }
+  .modal .warn{
+    background:#fdf2e9;border:1px solid #f5d5a8;color:#8a4a13;
+    padding:12px 16px;border-radius:8px;font-size:13px;line-height:1.7;
+  }
+  .modal .warn::before{content:"⚠️ ";margin-right:4px}
+  mark{background:#fff3a8;padding:0 2px;border-radius:2px}
+
+  footer{
+    margin-top:60px;padding:20px;text-align:center;color:var(--ink-soft);
+    font-size:12px;border-top:1px dashed var(--line);
+  }
+  footer b{color:var(--accent)}
+
+  /* ========== 打印样式 ========== */
+  @media print{
+    @page{size:A4;margin:18mm 16mm}
+    body{background:#fff !important;color:#111 !important}
+    .sidebar,.menu-toggle,.hero,.grid,footer,.modal-actions{display:none !important}
+    .main{margin-left:0 !important;padding:0 !important}
+    .modal{
+      position:static !important;display:block !important;background:none !important;
+      padding:0 !important;overflow:visible !important;backdrop-filter:none !important;
+    }
+    .modal-content{
+      max-width:100% !important;box-shadow:none !important;border-radius:0 !important;
+      padding:0 !important;animation:none !important;
+    }
+    .modal h2{padding-right:0 !important;color:#a83232 !important}
+    .modal h4{color:#a83232 !important;break-after:avoid}
+    .modal section{margin-top:14px !important;break-inside:avoid}
+    .modal .law{background:#f5f1e8 !important;border-left:3px solid #b8924a !important}
+    .modal .warn{background:#fdf2e9 !important;border:1px solid #f5d5a8 !important;color:#8a4a13 !important}
+    .modal .modal-cat{
+      background:#a83232 !important;color:#fff !important;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    }
+    *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+    .print-footer{
+      display:block !important;margin-top:30px;padding-top:12px;
+      border-top:1px dashed #d9cfb8;font-size:11px;color:#6b6358;text-align:center;
+    }
+  }
+  .print-footer{display:none}
+
+  /* ========== AI 助手浮动窗 ========== */
+  .ai-float{position:fixed;right:20px;bottom:20px;z-index:200;font-family:inherit}
+  .ai-float.collapsed .ai-panel{display:none}
+  .ai-float.expanded .ai-toggle{display:none}
+  .ai-toggle{
+    width:56px;height:56px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;border:none;cursor:pointer;font-size:24px;
+    box-shadow:0 4px 14px rgba(168,50,50,.35),0 8px 24px rgba(168,50,50,.2);
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .2s,box-shadow .2s;
+  }
+  .ai-toggle:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(168,50,50,.45)}
+  .ai-panel{
+    width:380px;height:520px;background:var(--card);
+    border:1px solid var(--line);border-radius:16px;
+    box-shadow:0 12px 40px rgba(60,40,20,.18);
+    display:flex;flex-direction:column;overflow:hidden;
+    animation:aiSlideUp .25s ease-out;
+  }
+  @keyframes aiSlideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .ai-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;flex-shrink:0;
+  }
+  .ai-header .ai-title{font-size:14px;font-weight:700;letter-spacing:.5px}
+  .ai-header .ai-sub{font-size:11px;opacity:.85;margin-top:2px}
+  .ai-header .ai-header-btn{
+    background:none;border:none;color:#fff;font-size:18px;cursor:pointer;
+    line-height:1;padding:4px 6px;opacity:.8;transition:opacity .15s;
+    border-radius:6px;
+  }
+  .ai-header .ai-header-btn:hover{opacity:1;background:rgba(255,255,255,.15)}
+  .ai-messages{
+    flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;
+    background:var(--bg);
+  }
+  .ai-msg{max-width:88%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.7;word-break:break-word}
+  .ai-msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+  .ai-msg.ai{align-self:flex-start;background:var(--card);color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .ai-msg.ai .card-refs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .ai-msg.ai .card-ref{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:3px 10px;background:var(--bg-2);color:var(--accent);
+    border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;
+    border:1px solid var(--line);transition:all .15s;
+  }
+  .ai-msg.ai .card-ref:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .ai-msg.ai .card-ref .ref-no{font-family:"Courier New",monospace;font-size:11px}
+  .ai-msg .thinking{color:var(--ink-soft);font-style:italic}
+  .ai-msg .thinking::after{content:"";display:inline-block;width:14px;text-align:left;animation:aiDots 1.4s infinite}
+  @keyframes aiDots{0%{content:"."}33%{content:".."}66%{content:"..."}}
+  .ai-input-wrap{
+    display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);
+    background:var(--card);flex-shrink:0;
+  }
+  .ai-input-wrap input{
+    flex:1;padding:10px 14px;font-size:13px;border:1.5px solid var(--line);
+    border-radius:10px;background:var(--bg);color:var(--ink);outline:none;
+    font-family:inherit;transition:border-color .2s;
+  }
+  .ai-input-wrap input:focus{border-color:var(--accent)}
+  .ai-input-wrap button{
+    padding:10px 16px;background:var(--accent);color:#fff;border:none;
+    border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;
+    font-weight:600;transition:background .15s;white-space:nowrap;
+  }
+  .ai-input-wrap button:hover{background:var(--accent-2)}
+  .ai-input-wrap button:disabled{opacity:.5;cursor:not-allowed}
+  .ai-welcome{text-align:center;color:var(--ink-soft);font-size:12px;padding:20px 10px;line-height:1.8}
+  .ai-welcome b{color:var(--accent)}
+  @media (max-width:880px){
+    .ai-panel{width:calc(100vw - 32px);height:60vh;right:16px;bottom:16px}
+    .ai-float{right:16px;bottom:16px}
+  }
+  .ai-mode-bar{
+    display:flex;align-items:center;gap:8px;padding:8px 16px;
+    border-top:1px solid var(--line);background:var(--card);flex-shrink:0;
+  }
+  .ai-mode-label{font-size:11px;color:var(--ink-soft);white-space:nowrap}
+  .ai-mode-config{
+    background:none;border:none;color:var(--ink-soft);cursor:pointer;
+    font-size:14px;padding:2px 4px;border-radius:4px;transition:all .15s;
+    margin-left:auto;
+  }
+  .ai-mode-config:hover{color:var(--accent);background:var(--bg-2)}
+  .ai-switch{
+    position:relative;display:inline-block;width:36px;height:20px;cursor:pointer;flex-shrink:0;
+  }
+  .ai-switch input{opacity:0;width:0;height:0}
+  .ai-slider{
+    position:absolute;inset:0;background:var(--line);border-radius:20px;
+    transition:background .2s;
+  }
+  .ai-slider::before{
+    content:"";position:absolute;height:16px;width:16px;left:2px;bottom:2px;
+    background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);
+  }
+  .ai-switch input:checked + .ai-slider{background:var(--accent)}
+  .ai-switch input:checked + .ai-slider::before{transform:translateX(16px)}
+  .ai-config-panel{
+    display:none;padding:12px 16px;border-top:1px solid var(--line);
+    background:var(--bg);flex-shrink:0;
+  }
+  .ai-config-panel.show{display:block}
+  .ai-config-panel input{
+    width:100%;padding:8px 12px;font-size:12px;border:1.5px solid var(--line);
+    border-radius:8px;background:var(--card);color:var(--ink);outline:none;
+    font-family:inherit;margin-bottom:8px;
+  }
+  .ai-config-panel input:focus{border-color:var(--accent)}
+  .ai-config-panel .ai-config-hint{font-size:11px;color:var(--ink-soft);line-height:1.5}
+  .ai-config-panel .ai-config-save{
+    padding:6px 14px;background:var(--accent);color:#fff;border:none;
+    border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit;
+    font-weight:600;transition:background .15s;
+  }
+  .ai-config-panel .ai-config-save:hover{background:var(--accent-2)}
+  @media print{.ai-float{display:none !important}}
+
+/* ========== PWA 安装引导 ========== */
+.pwa-install-banner{
+  display:none;position:fixed;bottom:0;left:0;right:0;
+  background:var(--card);border-top:1px solid var(--line);
+  padding:12px 16px;z-index:300;box-shadow:0 -4px 20px rgba(60,40,20,.12);
+  align-items:center;justify-content:space-between;gap:12px;
+}
+.pwa-install-banner.show{display:flex}
+.pwa-install-banner .pwa-text{font-size:13px;color:var(--ink);flex:1}
+.pwa-install-banner .pwa-text b{color:var(--accent)}
+.pwa-install-banner .pwa-btn{
+  padding:8px 16px;background:var(--accent);color:#fff;border:none;
+  border-radius:8px;font-size:13px;font-family:inherit;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:background .15s;
+}
+.pwa-install-banner .pwa-btn:hover{background:var(--accent-2)}
+.pwa-install-banner .pwa-close{
+  background:none;border:none;color:var(--ink-soft);font-size:18px;
+  cursor:pointer;padding:4px;line-height:1;
+}
+.pwa-install-banner .pwa-close:hover{color:var(--accent)}
+
+/* AI 按钮脉冲动画 */
+@keyframes aiPulse{
+  0%{box-shadow:0 4px 14px rgba(168,50,50,.35),0 0 0 0 rgba(168,50,50,.4)}
+  70%{box-shadow:0 4px 14px rgba(168,50,50,.35),0 0 0 12px rgba(168,50,50,0)}
+  100%{box-shadow:0 4px 14px rgba(168,50,50,.35),0 0 0 0 rgba(168,50,50,0)}
+}
+.ai-toggle.pulse{animation:aiPulse 2s infinite}
+
+/* 移动端 AI 全屏 */
+@media (max-width:880px){
+  .ai-panel{
+    position:fixed;inset:0;width:100vw !important;height:100vh !important;
+    border-radius:0 !important;right:0 !important;bottom:0 !important;
+    z-index:250;
+  }
+  .ai-float{right:0 !important;bottom:0 !important}
+}
+
+/* 常用问题快捷按钮 */
+.ai-quick-btns{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center;
+}
+.ai-quick-btn{
+  padding:5px 12px;background:var(--bg-2);color:var(--accent);
+  border:1px solid var(--line);border-radius:16px;font-size:12px;
+  cursor:pointer;transition:all .15s;font-family:inherit;
+}
+.ai-quick-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle">☰</button>
+<button class="sidebar-collapse" id="sidebarCollapse" title="收起/展开目录">‹</button>
+
+<!-- 左侧大纲 -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-row">
+      <div class="mini-logo">税</div>
+      <div class="title">高频疑难税务知识库</div>
+    </div>
+    <div class="subtitle">基于 <b>魏禾《900例》</b> 框架</div>
+    <span class="total-pill">共 <span id="sidebarTotal">0</span> 例 · Demo</span>
+  </div>
+  <nav class="outline-nav" id="outlineNav"></nav>
+</aside>
+
+<!-- 主体 -->
+<main class="main">
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <h1>企业高频疑难税务问题知识库</h1>
+      <div class="sub">基于 <b>魏禾《企业高频疑难税务问题900例》</b> 框架整理 · 示范Demo · 共 <span id="totalCount">0</span> 例</div>
+      <div class="toolbar">
+        <div class="search-box">
+          <input id="searchInput" type="text" placeholder="搜索案例标题、问题、关键词…比如：招待费、年终奖、视同销售">
+        </div>
+        <button class="clear-btn" id="clearBtn">清除筛选</button>
+      </div>
+      <div class="filters" id="filters">
+        <span class="filter-label">税种：</span>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="visibleCount">0</div><div class="lbl">当前显示</div></div>
+      <div class="stat"><div class="num" id="catCount">0</div><div class="lbl">税种分类</div></div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    📚 本知识库为基于公开税法+《魏禾900例》框架的<b>示范Demo</b>·内容仅供学习参考·实际业务请以最新法规为准 · 由 <b>CC - Kamisori</b> 制作
+  </footer>
+</div>
+</main>
+
+<!-- 模态框 -->
+<div class="modal" id="modal">
+  <div class="modal-content" id="modalContent">
+    <div class="modal-actions">
+      <button class="action-btn" id="printBtn" title="打印或另存为PDF（Ctrl+P）"><span class="ico">⎙</span>打印</button>
+      <button class="close-x" id="closeBtn" title="关闭（Esc）">×</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="print-footer">
+      企业高频疑难税务问题知识库 · 基于《魏禾900例》框架 · 由 CC - Kamisori 制作 · 仅供学习参考
+    </div>
+  </div>
+</div>
+
+<!-- PWA 安装引导横幅 -->
+<div class="pwa-install-banner" id="pwaBanner">
+  <span class="pwa-text">📲 <b>添加到主屏</b>，像 App 一样离线使用</span>
+  <button class="pwa-btn" id="pwaInstallBtn">立即添加</button>
+  <button class="pwa-close" id="pwaCloseBtn">×</button>
+</div>
+
+<!-- AI 助手浮动窗 -->
+<div class="ai-float collapsed" id="aiFloat">
+  <button class="ai-toggle pulse" id="aiToggle" title="AI 税务助手">🤖</button>
+  <div class="ai-panel" id="aiPanel">
+    <div class="ai-header">
+      <div>
+        <div class="ai-title">🤖 AI 税务助手</div>
+        <div class="ai-sub">基于知识库智能检索</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="ai-header-btn" id="aiClear" title="清屏">🗑</button>
+        <button class="ai-header-btn" id="aiClose" title="收起">−</button>
+      </div>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-welcome">
+        <b>👋 你好！</b><br>
+        我是你的税务知识库助手<br>
+        输入问题，我会从 <b>30+</b> 个案例中<br>
+        为你找到最相关的答案
+        <div class="ai-quick-btns">
+          <button class="ai-quick-btn" data-q="招待费怎么抵扣？">招待费抵扣</button>
+          <button class="ai-quick-btn" data-q="年终奖单独计税怎么选？">年终奖计税</button>
+          <button class="ai-quick-btn" data-q="研发费用加计扣除比例">研发加计</button>
+          <button class="ai-quick-btn" data-q="小型微利企业标准">小微企业</button>
+          <button class="ai-quick-btn" data-q="视同销售的情形">视同销售</button>
+          <button class="ai-quick-btn" data-q="印花税怎么交？">印花税</button>
+        </div>
+      </div>
+    </div>
+    <div class="ai-input-wrap">
+      <input id="aiInput" type="text" placeholder="例如：招待费怎么抵扣？年终奖怎么算？" autocomplete="off">
+      <button id="aiSend">发送</button>
+    </div>
+    <div class="ai-mode-bar">
+      <label class="ai-switch" title="关闭时仅搜索本地知识库，开启后可联网补充">
+        <input type="checkbox" id="aiModeSwitch">
+        <span class="ai-slider"></span>
+      </label>
+      <span class="ai-mode-label" id="aiModeLabel">本地知识库</span>
+      <button class="ai-mode-config" id="aiConfigBtn" title="配置 API Key">⚙</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  // ========== 增值税（8例） ==========
+  {no:"001",cat:"增值税",title:"业务招待费的进项税额能否抵扣？",tags:["进项抵扣","招待费","个人消费"],
+    q:"公司宴请客户产生餐饮费，取得增值税专用发票，进项税额能否抵扣？",
+    a:"<b>不得抵扣</b>。餐饮服务属于用于'个人消费'范畴的项目，无论是招待客户还是员工聚餐，其进项税额均不得从销项税额中抵扣。",
+    detail:["即使取得增值税专用发票，也<b>不得抵扣进项</b>，已勾选认证的需做进项税额转出。","注意区分：差旅途中的餐饮费仍不得抵扣；但住宿费可抵扣。","会议费中如单独列示餐饮金额，对应进项也不得抵扣。"],
+    law:"《增值税暂行条例》第十条；财税〔2016〕36号文附件1第二十七条：用于简易计税、免税、集体福利或个人消费的购进货物、服务，进项税额不得从销项税额中抵扣。",
+    warn:"实务中很多企业将餐饮费认证抵扣后未做转出，属于偷税的高风险点。"
+  },
+  {no:"002",cat:"增值税",title:"视同销售的常见情形与计税依据",
+    tags:["视同销售","无偿赠送","计税依据"],
+    q:"公司将外购商品作为礼品赠送客户，是否需要视同销售缴纳增值税？",
+    a:"<b>需要视同销售</b>。将货物（无论自产、委托加工还是外购）无偿赠送给其他单位或个人，应视同销售货物缴纳增值税。",
+    detail:["视同销售四种常见情形：①自产/委托加工货物用于集体福利或个人消费；②外购货物用于无偿赠送；③将货物用于投资、分配；④异地移送用于销售。","计税依据顺序：本企业近期同类售价 → 其他纳税人近期同类售价 → 组成计税价格（成本×(1+成本利润率)）。","注意：外购货物用于'集体福利或个人消费'<b>不视同销售</b>，但进项不得抵扣。"],
+    law:"《增值税暂行条例实施细则》第四条；财税〔2016〕36号文附件1第十四条。",
+    warn:"赠送客户礼品还涉及个人所得税代扣代缴（按'偶然所得'20%）及企业所得税视同销售。"
+  },
+  {no:"003",cat:"增值税",title:"违约金是否缴纳增值税？",tags:["价外费用","违约金","销售折让"],
+    q:"客户违约支付的违约金，公司收到后是否需要开具发票并缴纳增值税？",
+    a:"<b>视情况而定</b>。区分关键在于业务是否实际发生：销售方收取的违约金属于价外费用应纳税；购买方收取的违约金不属于价外费用，不纳税。",
+    detail:["销售方收取违约金 → <b>属于价外费用</b>，并入销售额缴纳增值税。","购买方收取违约金（如卖方违约赔付）→ <b>不属于增值税应税行为</b>，开具收据即可。","合同未实际履行而收取违约金 → 不属于增值税应税范围。"],
+    law:"《增值税暂行条例》第六条；财税〔2016〕36号文附件1第三十七条。",
+    warn:"实务中要看违约金支付方向，方向反了税务处理完全不同。"
+  },
+  {no:"004",cat:"增值税",title:"取得失控发票/异常凭证如何处理？",tags:["异常凭证","进项转出","失控发票"],
+    q:"公司认证抵扣的进项发票被税务系统列为'异常凭证'，应如何处理？",
+    a:"<b>已抵扣的需做进项税额转出</b>；未抵扣的暂不允许抵扣，待核实后再处理。",
+    detail:["收到税务机关《税务事项通知书》后，应在规定期限内做进项税额转出。","符合条件的（如出口退税）可申请核实，确属真实交易的可恢复抵扣。","企业所得税方面：异常凭证对应的成本费用，若不能证明真实性，<b>同样不得税前扣除</b>。"],
+    law:"国家税务总局公告2019年第38号；国家税务总局公告2018年第28号。",
+    warn:"善意取得虚开发票仍需做进项转出，但一般不加收滞纳金。"
+  },
+  {no:"005",cat:"增值税",title:"差额征税业务如何开票？",tags:["差额征税","开票","劳务派遣"],
+    q:"劳务派遣公司选择差额纳税，发票应该如何开具？",
+    a:"按规定<b>可开具差额征税发票</b>：销售额栏填写收取的全部价款，差额征税栏次自动计算扣除项金额，税额按差额计算。",
+    detail:["开票系统中选择'差额征税'功能开具，发票备注栏自动注明'差额征税'。","可开<b>普通发票</b>（全额），或<b>差额专票</b>（仅就差额部分可抵扣）。","常见差额征税业务：旅游服务、劳务派遣、人力资源外包、建筑分包、金融商品转让。"],
+    law:"国家税务总局公告2016年第23号；财税〔2016〕47号。",
+    warn:"差额扣除凭证必须取得合规票据（如分包发票、工资表等），否则不允许扣除。"
+  },
+  {no:"006",cat:"增值税",title:"固定资产进项抵扣的特殊规则",tags:["固定资产","进项抵扣","不动产"],
+    q:"公司购入既用于一般计税又用于免税项目的设备，进项税额能否全额抵扣？",
+    a:"<b>可以全额抵扣</b>。专门用于免税/简易计税/集体福利项目的固定资产、无形资产、不动产进项不得抵扣；混用的则<b>允许全额抵扣</b>。",
+    detail:["关键判断：'专用'还是'兼用'。专用于不得抵扣项目 → 不能抵扣；兼用 → 全额抵扣。","2019年4月1日后取得不动产进项一次性抵扣（取消分2年抵扣的规定）。","已抵扣的不动产改变用途专用于不得抵扣项目，按净值率计算转出。"],
+    law:"财税〔2016〕36号文附件1第二十七条；国家税务总局公告2019年第14号。",
+    warn:"'兼用'要有合理证据（如使用记录、生产排程），否则税务可能认定为'专用'要求转出。"
+  },
+  {no:"007",cat:"增值税",title:"无偿借款是否视同销售？",tags:["视同销售","无偿借款","关联企业"],
+    q:"集团母公司无偿借款给子公司使用，是否需要视同销售缴纳增值税？",
+    a:"<b>原则上视同销售</b>，但<b>集团内单位（含企业集团）之间的资金无偿借贷免征增值税</b>（政策延续至2027年底）。",
+    detail:["非集团关联企业之间的无偿借款 → <b>视同销售</b>，按贷款服务6%缴纳增值税。","企业集团内（已在国家市场监管总局备案）的无偿借贷 → 免征增值税。","计税依据：可参照同期银行贷款利率核定。","<b>重要前瞻</b>：2026.1.1《增值税法》正式施行后，企业间无偿借款不属于增值税应税范围，性质由'<b>免征</b>'转为'<b>不征</b>'。"],
+    law:"财政部 税务总局公告2023年第68号（集团内借贷免税延续至2027.12.31）；<b>《中华人民共和国增值税法》</b>（2024.12.25通过，2026.1.1施行）。",
+    warn:"必须是真正登记备案的'企业集团'，普通的母子公司关系不当然适用免税。"
+  },
+  {no:"008",cat:"增值税",title:"红字发票开具的常见错误",tags:["红字发票","作废发票","纳税申报"],
+    q:"专票已跨月认证，发现金额开错，能否直接作废重开？",
+    a:"<b>不能作废</b>。跨月发票或已认证的发票一律不得作废，必须通过开具<b>红字发票</b>冲销后再开蓝字发票。",
+    detail:["开票当月未交付 + 未认证 → 可直接作废。","跨月 / 已认证 / 已交付 → 必须开红字。","流程：购方在开票系统申请《信息表》→ 销方据此开红字 → 双方在当期申报表中冲减。"],
+    law:"国家税务总局公告2016年第47号；2024年数电票实施后流程有所简化。",
+    warn:"红字开错（如未取得购方信息表）会导致进项无法转出，引发滞纳金风险。"
+  },
+
+  // ========== 企业所得税（10例） ==========
+  {no:"009",cat:"企业所得税",title:"业务招待费的税前扣除限额",tags:["招待费","限额扣除","纳税调整"],
+    q:"公司年度收入1000万，发生业务招待费8万元，所得税前可以扣除多少？",
+    a:"扣除限额为 <b>min(实际发生额×60%, 营业收入×5‰)</b>。本例：8万×60%=4.8万，1000万×5‰=5万，取较小者 <b>4.8万</b>，需调增3.2万。",
+    detail:["计算两个数：①实际发生×60%；②营业收入×5‰。取较小者扣除。","'营业收入'包括主营业务收入+其他业务收入+视同销售收入，<b>不含营业外收入</b>。","筹建期招待费：按实际发生额的60%计入开办费。"],
+    law:"《企业所得税法实施条例》第四十三条。",
+    warn:"误将'营业外收入'计入基数是常见错误，会被纳税评估调整。"
+  },
+  {no:"010",cat:"企业所得税",title:"研发费用加计扣除的范围与凭证",tags:["研发加计","加计扣除","研发费用"],
+    q:"公司研发部门发生的差旅费、培训费，能否纳入研发费用加计扣除？",
+    a:"<b>部分可以</b>。允许加计扣除的范围有明确列举：人员人工、直接投入、折旧、无形资产摊销、新产品设计费、其他相关费用（限10%上限）。差旅费、培训费归入'其他相关费用'。",
+    detail:["'其他相关费用'包括：技术图书、专家咨询、知识产权申请、差旅、会议、外聘人员劳务等。","'其他相关费用'有<b>10%限额</b>：不超过可加计扣除研发费总额的10%。","2023年起，所有适用加计扣除企业统一按<b>100%加计扣除</b>。","<b>集成电路企业、工业母机企业</b>按 <b>120% 加计扣除</b>（执行至2027.12.31）。"],
+    law:"财税〔2015〕119号；财政部 税务总局公告2023年第7号；财政部 税务总局 国家发展改革委 工业和信息化部公告2023年第44号（集成电路/工业母机120%加计）。",
+    warn:"研发费用要在账务上单独归集（辅助账），不归集不能享受加计。"
+  },
+  {no:"011",cat:"企业所得税",title:"职工福利费、工会经费、教育经费扣除限额",tags:["三项经费","限额扣除","工资薪金"],
+    q:"公司账上工资总额500万，福利费80万，工会经费10万，教育经费8万，分别能扣除多少？",
+    a:"福利费限额70万（14%）→ 调增10万；工会经费限额10万（2%）→ 全额扣除；教育经费限额40万（8%）→ 全额扣除。",
+    detail:["福利费：工资薪金 × 14%；工会经费：× 2%（必须有工会专用收据）；教育经费：× 8%。","<b>教育经费超过8%部分可无限期结转</b>以后纳税年度扣除（福利费、工会经费超出部分不得结转）。","教育经费2018年起从2.5%统一提到8%。","'工资薪金总额'指实际发放数（不是计提数），<b>必须实际发放才能作为基数</b>。"],
+    law:"《企业所得税法实施条例》第四十、四十一、四十二条；财税〔2018〕51号。",
+    warn:"福利费列支需有明细（如食堂、宿舍、慰问），笼统列支易被纳税调整。"
+  },
+  {no:"012",cat:"企业所得税",title:"广告费和业务宣传费扣除限额",tags:["广宣费","限额扣除","结转扣除"],
+    q:"公司收入1亿，发生广告宣传费2000万，能扣除多少？超出部分怎么办？",
+    a:"一般行业限额 = 销售收入 × 15% = 1500万，超出500万 <b>结转以后年度扣除</b>。",
+    detail:["一般企业：销售（营业）收入 × 15%。","化妆品制造销售、医药制造、饮料制造（不含酒类）：× 30%。","烟草企业：广告费和业务宣传费<b>一律不得扣除</b>。","超过部分可<b>无限期结转</b>到以后年度扣除。"],
+    law:"财税〔2017〕41号；《企业所得税法实施条例》第四十四条。",
+    warn:"赞助支出不属于广告费，<b>不得税前扣除</b>，要区分清楚。"
+  },
+  {no:"013",cat:"企业所得税",title:"资产损失税前扣除如何申报？",tags:["资产损失","申报扣除","坏账"],
+    q:"公司应收账款3年未收回确认坏账损失，所得税申报时需要报送哪些资料？",
+    a:"自2017年起，资产损失<b>不再报送资料，企业自行留存备查</b>，但需在年度汇算时填报《A105090资产损失税前扣除及纳税调整明细表》。",
+    detail:["分'实际资产损失'和'法定资产损失'：实际损失实际发生年度扣除；法定损失需取得证据后扣除。","坏账损失：账龄分析+合同+催收记录+企业自有说明（视金额需第三方鉴证）。","以前年度未扣损失可追补到发生年度扣除，追补期限不得超过<b>5年</b>。"],
+    law:"国家税务总局公告2018年第15号；国家税务总局公告2011年第25号。",
+    warn:"未及时申报或资料不全的，税务可能不认可扣除，引发补税+滞纳金。"
+  },
+  {no:"014",cat:"企业所得税",title:"利息支出与债资比限制",tags:["利息扣除","债资比","关联方"],
+    q:"公司向关联方借款，年利率8%，债资比3:1，利息支出能否全额扣除？",
+    a:"<b>不能全额扣除</b>。两重限制：①利率不超过同期金融企业贷款利率；②债资比一般企业 2:1、金融企业 5:1，超出部分不得扣除。",
+    detail:["利率限制：参照同期同类银行贷款利率（实务中很多地方接受LPR+合理浮动）。","债资比超标 → 超出部分对应的利息<b>当年和以后年度均不得扣除</b>。","例外：能证明交易符合独立交易原则，或实际税负不高于关联方的，可放宽。"],
+    law:"财税〔2008〕121号；《企业所得税法》第四十六条。",
+    warn:"向自然人股东借款利息扣除，同样适用利率限制（不能超过金融企业利率）。"
+  },
+  {no:"015",cat:"企业所得税",title:"小型微利企业的判定标准",tags:["小微企业","税收优惠","税率"],
+    q:"我们公司年应纳税所得额280万、从业人员280人、资产总额4500万，是否属于小型微利企业？",
+    a:"<b>不属于</b>。从业人员超过300人虽符合，但应纳税所得额必须 ≤ 300万、资产总额 ≤ 5000万、从业人员 ≤ 300人，<b>三个条件须同时满足</b>。",
+    detail:["现行小微标准（2023-2027）：应纳税所得额≤300万、从业人员≤300人、资产总额≤5000万。","税率优惠：所得额×25%×20% = 实际<b>5%</b>（2023-2027延续）。","从业人员、资产总额按全年季度<b>平均值</b>计算。"],
+    law:"财政部 税务总局公告2023年第12号、2023年第6号。",
+    warn:"季度预缴时即可享受，年度汇算时按全年数据再次判定，可能补缴或退税。"
+  },
+  {no:"016",cat:"企业所得税",title:"固定资产一次性扣除政策",tags:["一次性扣除","固定资产","加速折旧"],
+    q:"2024年购入一台单价400万元的生产设备，能否一次性税前扣除？",
+    a:"<b>可以</b>。2024-2027年，企业新购进设备、器具，单位价值不超过500万的，允许一次性计入当期成本费用税前扣除。",
+    detail:["条件：①2024.1.1-2027.12.31期间新购进；②单位价值 ≤ 500万；③用于生产经营的设备、器具（不含房屋建筑物）。","会计上仍按正常折旧，税务上一次性扣除 → 形成<b>暂时性差异</b>，需做纳税调整。","可选择不享受，但选择不享受后<b>不得改变</b>。"],
+    law:"<b>财政部 税务总局公告2023年第37号</b>（延续至2027.12.31）；财税〔2018〕54号。",
+    warn:"会税差异要逐年跟踪，否则后期纳税调整容易遗漏。"
+  },
+  {no:"017",cat:"企业所得税",title:"政府补助的税务处理",tags:["政府补助","不征税收入","专项资金"],
+    q:"公司收到200万政府专项补助用于研发项目，能否作为不征税收入处理？",
+    a:"<b>满足三条件可以</b>：①企业提供资金拨付文件且规定专项用途；②财政部门有专门的资金管理办法；③企业对资金及其支出单独核算。",
+    detail:["不征税收入的好处：收入不计税。","但有<b>对等限制</b>：支出形成的费用、折旧、摊销同样不能税前扣除/不能享受加计扣除。","研发资金选择不征税收入，对应研发费<b>不能加计扣除</b>，需权衡。","5年（60个月）内未发生支出且未缴回的，应计入第6年应税收入。"],
+    law:"财税〔2011〕70号。",
+    warn:"对研发企业而言，把政府补助作为'征税收入'反而更划算（可以加计扣除）。"
+  },
+  {no:"018",cat:"企业所得税",title:"跨年度发票如何税前扣除？",tags:["跨年发票","汇算清缴","税前扣除"],
+    q:"2024年12月发生的费用，2025年5月才取得发票，能否在2024年汇算时扣除？",
+    a:"<b>可以</b>。汇算清缴期结束前（次年5月31日前）取得发票，按权责发生制可在2024年度扣除。",
+    detail:["发票管理办法规定，企业当年度实际发生的相关成本、费用，由于各种原因未能及时取得发票，预缴季度所得税时，可暂按账面发生金额核算；但<b>汇算清缴时，应补充提供发票</b>。","汇算结束后仍未取得 → 应做<b>纳税调增</b>；以后年度取得的，可追补扣除（不超过5年）。"],
+    law:"国家税务总局公告2018年第28号《企业所得税税前扣除凭证管理办法》。",
+    warn:"采购合同+付款记录+对方发票<b>三流必须一致</b>，否则即使有票也可能被否定。"
+  },
+
+  // ========== 个人所得税（6例） ==========
+  {no:"019",cat:"个人所得税",title:"年终奖单独计税 vs 综合计税如何选择？",tags:["年终奖","综合所得","税收优惠"],
+    q:"年终奖5万元，单独计税和并入综合所得哪种更划算？",
+    a:"<b>视全年综合所得水平而定</b>。年综合所得收入低（基本扣除后接近0或负数）→ 并入综合计税划算；收入较高 → 单独计税划算。",
+    detail:["单独计税：年终奖÷12查税率，单独适用月度税率表，<b>2027年12月31日前有效</b>。","并入综合：年终奖+工资合并按年综合所得算（3%-45%七级）。","注意'年终奖盲区'：6万-6.7万等若干区间，多1元年终奖反而少拿很多税后收入。"],
+    law:"财税〔2018〕164号；财政部 税务总局公告2023年第30号（延续至2027年）。",
+    warn:"两种方式只能选一种全年使用，可在汇算清缴时调整选择。"
+  },
+  {no:"020",cat:"个人所得税",title:"股权激励的个税处理",tags:["股权激励","限制性股票","延期纳税"],
+    q:"上市公司股票期权行权所得，如何缴纳个人所得税？",
+    a:"行权时按 <b>（行权价-市场价）× 数量</b> 作为'工资薪金所得'，<b>单独适用综合所得税率表</b>，不并入当年综合所得。",
+    detail:["上市公司：行权日 → 工资薪金；之后转让 → 财产转让所得（个人转让境内上市公司股票暂免征）。","非上市公司：符合条件可<b>递延至转让股权时</b>缴纳（按'财产转让所得'20%）。","单独计税政策延续至<b>2027年12月31日</b>。","<b>上市公司股权激励分期纳税期限由12个月延长至36个月</b>（执行至2027.12.31）。"],
+    law:"财税〔2005〕35号；财税〔2016〕101号；财政部 税务总局公告2023年第25号；<b>财政部 税务总局公告2024年第2号</b>（分期纳税延长至36个月）。",
+    warn:"非上市公司股权激励享受递延要事先<b>向税务机关备案</b>，未备案不能享受。"
+  },
+  {no:"021",cat:"个人所得税",title:"个人独资企业、合伙企业的个税",tags:["个独","合伙企业","经营所得"],
+    q:"个人独资企业的利润是否需要缴纳企业所得税？",
+    a:"<b>不缴企业所得税</b>。个独和合伙企业不是企业所得税纳税人，其投资人按 <b>'经营所得'</b> 缴纳个人所得税（5%-35%五级超额累进）。",
+    detail:["生产经营所得 = 收入总额 - 成本费用税金 - 损失 - 投资者本人费用扣除（6万/年）。","核定征收 vs 查账征收：2022年起对持有股权/合伙份额的个独/合伙企业不再核定征收，必须查账。","合伙企业'<b>先分后税</b>'：以每个合伙人为纳税人。"],
+    law:"《个人所得税法》；财政部 税务总局公告2021年第41号。",
+    warn:"'核定征收'政策大幅收紧，过去用核定避税的模式已不可行。"
+  },
+  {no:"022",cat:"个人所得税",title:"全年一次性奖金 vs 离职补偿金",tags:["离职补偿","解除劳动合同","免税额度"],
+    q:"员工被解除劳动合同获得补偿金15万元，需要缴纳个税吗？",
+    a:"补偿金在 <b>当地上年职工平均工资3倍以内的部分免税</b>；超出部分 <b>单独适用综合所得税率表</b>（不并入当年综合所得）。",
+    detail:["3倍以内：完全免税。","超过3倍部分：单独按综合所得税率表计税（不减除5000元）。","'当地'指<b>地市级</b>上年度社平工资。","该规定只适用于'解除劳动合同一次性补偿'，正常的离职奖金不能套用。"],
+    law:"财税〔2018〕164号。",
+    warn:"分多次发放的，只有第一次可享受免税，后续按工资薪金正常计税。"
+  },
+  {no:"023",cat:"个人所得税",title:"专项附加扣除常见问题",tags:["专项附加扣除","子女教育","赡养老人"],
+    q:"夫妻双方都有2个孩子，子女教育专项附加扣除如何分配？",
+    a:"每个子女每月扣除标准 <b>2000元</b>（2023年提高）。可由父母一方按2000元/月扣除，也可由双方各按1000元/月扣除，<b>一个纳税年度内不得变更</b>。",
+    detail:["子女教育：每个子女2000元/月（学前+学历教育）。","赡养老人：独生子女3000元/月；非独子女合计3000元/月，单人不超1500元。","住房贷款利息：1000元/月（仅首套）。","婴幼儿（3岁以下）：2000元/月。"],
+    law:"国务院《关于提高个人所得税有关专项附加扣除标准的通知》国发〔2023〕13号。",
+    warn:"扣除前先做<b>专项附加扣除信息填报</b>，否则汇算清缴时无法享受。"
+  },
+  {no:"024",cat:"个人所得税",title:"年终奖盲区如何避免？",tags:["年终奖","税率盲区","税收筹划"],
+    q:"年终奖发36000元和36001元，税后金额差多少？",
+    a:"36000元：税3%=1080元，税后34920元。36001元：税10%-210=3390.1元，税后32610.9元。<b>多发1元，少拿2309元</b>！这就是年终奖盲区。",
+    detail:["六大盲区临界值：36000、144000、300000、420000、660000、960000。","盲区内多发的金额'得不偿失'，发奖时要避开。","解决办法：临界点附近的部分，超出部分宁可不发或分到工资中发。"],
+    law:"财税〔2018〕164号。",
+    warn:"年终奖临界点是HR和老板都容易踩的坑，发奖前务必测算。"
+  },
+
+  // ========== 印花税（3例） ==========
+  {no:"025",cat:"印花税",title:"哪些合同需要缴印花税？",tags:["印花税","合同种类","税目"],
+    q:"公司与员工签订的劳动合同需要缴印花税吗？租房合同呢？",
+    a:"<b>劳动合同不缴</b>印花税；<b>租房合同需缴</b>（按'财产租赁合同'1‰）。",
+    detail:["印花税应税合同种类（2022年新法）：买卖、承揽、建设工程、运输、技术、租赁、保管、仓储、财产保险、借款、证券交易等。","<b>不属于应税</b>的常见合同：劳动合同、人寿保险、再保险、特定农产品收购合同。","税率：买卖合同0.3‰，租赁1‰，借款0.05‰，承揽1‰。"],
+    law:"《印花税法》（2022.7.1实施）。",
+    warn:"印花税法实施后，<b>资金账簿改为按实收资本+资本公积一次性缴纳（0.25‰）</b>，不再年年缴。"
+  },
+  {no:"026",cat:"印花税",title:"合同金额未确定如何贴花？",tags:["印花税","合同金额","计税依据"],
+    q:"签订框架采购合同时金额未定，印花税怎么算？",
+    a:"<b>先按定额5元贴花</b>，待合同金额确定后再按金额×税率补缴差额。",
+    detail:["签订时无金额 → 按定额5元贴花。","实际结算金额超过合同金额 → 按实际结算金额补缴差额。","实际结算金额低于合同金额 → 不退印花税。","2022年新法：增值税不作为印花税计税依据（合同列明可扣除）。"],
+    law:"《印花税法》第六条；财政部 税务总局公告2022年第22号。",
+    warn:"很多企业框架合同从未贴花，<b>追溯期最长5年</b>，一次性补缴金额可能很大。"
+  },
+  {no:"027",cat:"印花税",title:"账簿印花税2022年后的变化",tags:["营业账簿","实收资本","资金账簿"],
+    q:"2022年新成立公司注册资本1000万，账簿印花税怎么交？",
+    a:"按 <b>实收资本+资本公积合计金额 × 0.25‰</b> 缴纳。1000万实缴 → 2500元。",
+    detail:["旧规则：营业账簿按5元/本（其他账簿），资金账簿按实收资本+资本公积×0.5‰。","2022.7.1起：<b>其他营业账簿免征</b>，仅保留资金账簿，且税率<b>减半为0.25‰</b>。","以后年度增加实收资本/资本公积，按<b>增加额</b>0.25‰补缴。"],
+    law:"《印花税法》；财税〔2018〕50号（税率减半）。",
+    warn:"认缴未实缴部分不缴印花税，待实缴时再缴。"
+  },
+
+  // ========== 土地增值税 / 房产税（3例） ==========
+  {no:"028",cat:"土地增值税",title:"房地产开发企业土地增值税清算时点",tags:["土增清算","房地产","清算"],
+    q:"房地产项目什么时候要进行土地增值税清算？",
+    a:"两种情形：<b>应当清算</b>（项目全部竣工销售完成、整体转让、清算注销）；<b>可要求清算</b>（销售面积≥85%、取得销售证三年未售完等）。",
+    detail:["应当清算：①项目竣工销售；②整体转让；③清算注销。","可要求清算（税务机关有权要求）：①已转让面积≥85%或剩余可售≤15%；②取得销售许可证满3年仍未售完；③申请注销但未办清算。","清算单位：以国家有关部门审批的房地产开发项目为单位，分期开发的以分期项目为单位。"],
+    law:"《土地增值税暂行条例》；国税发〔2006〕187号。",
+    warn:"清算后再销售的部分，按单位平均成本扣除后再清算补充申报。"
+  },
+  {no:"029",cat:"土地增值税",title:"普通住宅免税的条件",tags:["普通住宅","土增免税","增值率"],
+    q:"销售普通住宅，增值率多少以下可以免征土地增值税？",
+    a:"<b>增值额未超过扣除项目金额20%</b>的普通标准住宅免征土地增值税；超过20%的，应就<b>全部增值额</b>计税（不是只就超出部分）。",
+    detail:["免税条件：①普通标准住宅（各地标准不同，一般指容积率>1.0、单套面积<144㎡、单价不超规定）；②增值率≤20%。","增值率=（销售收入-扣除项目）÷扣除项目。","非住宅、别墅、高档公寓不适用此免税。"],
+    law:"《土地增值税暂行条例》第八条。",
+    warn:"增值率超20%即按全部增值额征税，临界点附近要做<b>税收筹划</b>（降价或多投入成本）。"
+  },
+  {no:"030",cat:"房产税",title:"自有房产出租vs自用的房产税",tags:["房产税","计税依据","自用出租"],
+    q:"公司自有办公楼，部分自用、部分出租，房产税如何缴纳？",
+    a:"<b>自用部分</b>按房产原值×（1-扣除比例10%~30%）×1.2%；<b>出租部分</b>按租金收入×12%。同一栋楼分别按面积比例划分。",
+    detail:["自用部分：从价计征，原值减除10%-30%（各省规定）后×1.2%。","出租部分：从租计征，租金收入×12%（个人住房出租×4%）。","'房产原值'按会计账面价值，包含与房屋不可分割的附属设备和配套设施。","免税：基建工地临时性房屋、个人非营业用房、宗教/公园/名胜古迹自用。"],
+    law:"《房产税暂行条例》；财税〔2008〕24号。",
+    warn:"将自用改为出租后，从次月起按租金计征，要及时变更纳税申报。"
+  }
+];
+
+const grid = document.getElementById('grid');
+const filters = document.getElementById('filters');
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearBtn');
+const visibleCount = document.getElementById('visibleCount');
+const catCount = document.getElementById('catCount');
+const totalCount = document.getElementById('totalCount');
+const sidebarTotal = document.getElementById('sidebarTotal');
+const modal = document.getElementById('modal');
+const modalBody = document.getElementById('modalBody');
+const closeBtn = document.getElementById('closeBtn');
+const printBtn = document.getElementById('printBtn');
+const modalContent = document.getElementById('modalContent');
+const outlineNav = document.getElementById('outlineNav');
+const sidebar = document.getElementById('sidebar');
+const menuToggle = document.getElementById('menuToggle');
+
+let activeCat = '全部';
+let keyword = '';
+let currentNo = null;
+
+const cats = ['全部', ...new Set(DATA.map(d=>d.cat))];
+
+totalCount.textContent = DATA.length;
+sidebarTotal.textContent = DATA.length;
+catCount.textContent = cats.length - 1;
+
+// === 渲染左侧大纲 ===
+function renderOutline(){
+  const grouped = {};
+  DATA.forEach(d=>{
+    if(!grouped[d.cat]) grouped[d.cat]=[];
+    grouped[d.cat].push(d);
+  });
+  outlineNav.innerHTML = Object.keys(grouped).map(cat=>`
+    <div class="outline-group">
+      <div class="outline-cat" data-cat="${cat}">
+        <span class="cat-left"><span class="dot"></span>${cat}</span>
+        <span>
+          <span class="cat-count">${grouped[cat].length}</span>
+          <span class="arrow">▼</span>
+        </span>
+      </div>
+      <div class="outline-items">
+        ${grouped[cat].map(d=>`
+          <div class="outline-item" data-no="${d.no}">
+            <span class="num">${d.no}</span>
+            <span>${d.title}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  outlineNav.querySelectorAll('.outline-cat').forEach(el=>{
+    el.onclick=()=>el.classList.toggle('collapsed');
+  });
+  outlineNav.querySelectorAll('.outline-item').forEach(el=>{
+    el.onclick=()=>{
+      openModal(el.dataset.no);
+      if(window.innerWidth<=880) sidebar.classList.remove('show');
+    };
+  });
+}
+
+// === 渲染顶部税种过滤 ===
+cats.forEach(c=>{
+  const el=document.createElement('span');
+  el.className='tag'+(c===activeCat?' active':'');
+  const cnt = c==='全部'?DATA.length:DATA.filter(d=>d.cat===c).length;
+  el.innerHTML=`${c}<span class="count">${cnt}</span>`;
+  el.onclick=()=>{activeCat=c;document.querySelectorAll('#filters .tag').forEach(t=>t.classList.remove('active'));el.classList.add('active');render();};
+  filters.appendChild(el);
+});
+
+// === 高亮 ===
+function hi(text, kw){
+  if(!kw) return text;
+  const re = new RegExp(`(${kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');
+  return text.replace(re,'<mark>$1</mark>');
+}
+
+// === 渲染卡片 ===
+function render(){
+  const kw = keyword.trim().toLowerCase();
+  const filtered = DATA.filter(d=>{
+    if(activeCat!=='全部' && d.cat!==activeCat) return false;
+    if(kw){
+      const blob = (d.title+d.q+d.a+d.tags.join(' ')+d.cat+(d.detail||[]).join(' ')).toLowerCase();
+      if(!blob.includes(kw)) return false;
+    }
+    return true;
+  });
+  visibleCount.textContent = filtered.length;
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="empty"><div class="emoji">🍃</div>没有匹配的案例，换个关键词试试？</div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(d=>`
+    <div class="card" data-no="${d.no}">
+      <span class="card-no">#${d.no}</span>
+      <div class="card-cat">${d.cat}</div>
+      <h3>${hi(d.title,kw)}</h3>
+      <p class="q">Q：${hi(d.q,kw)}</p>
+      <div class="tags">${d.tags.map(t=>`<span>${hi(t,kw)}</span>`).join('')}</div>
+      <div class="more">点击查看详细解析 →</div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.card').forEach(c=>{
+    c.onclick=()=>openModal(c.dataset.no);
+  });
+}
+
+// === 打开详情模态框 ===
+function openModal(no){
+  const d = DATA.find(x=>x.no===no);
+  if(!d) return;
+  currentNo = no;
+  modalBody.innerHTML = `
+    <div><span class="modal-cat">${d.cat}</span><span class="modal-no">案例 #${d.no}</span></div>
+    <h2>${d.title}</h2>
+    <section>
+      <h4>问题描述</h4>
+      <p>${d.q}</p>
+    </section>
+    <section>
+      <h4>核心答案</h4>
+      <p>${d.a}</p>
+    </section>
+    <section>
+      <h4>详细解析</h4>
+      <ul>${(d.detail||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+    </section>
+    <section>
+      <h4>法规依据</h4>
+      <div class="law">${d.law||'—'}</div>
+    </section>
+    ${d.warn?`<section><h4>风险提示</h4><div class="warn">${d.warn}</div></section>`:''}
+    <section>
+      <h4>关联标签</h4>
+      <div class="tags" style="display:flex;flex-wrap:wrap;gap:6px">${d.tags.map(t=>`<span style="padding:3px 10px;background:var(--bg-2);color:var(--accent);border-radius:10px;font-size:12px">${t}</span>`).join('')}</div>
+    </section>
+  `;
+  modal.classList.add('show');
+  document.body.style.overflow='hidden';
+
+  // 高亮左侧大纲对应项
+  document.querySelectorAll('.outline-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.no===no);
+  });
+}
+
+function closeModal(){
+  modal.classList.remove('show');
+  document.body.style.overflow='';
+  currentNo=null;
+  document.querySelectorAll('.outline-item').forEach(el=>el.classList.remove('active'));
+}
+
+closeBtn.onclick=closeModal;
+modal.onclick=(e)=>{if(e.target===modal)closeModal()};
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && modal.classList.contains('show'))closeModal();
+  if(e.key==='p' && (e.ctrlKey||e.metaKey) && modal.classList.contains('show')){
+    // 浏览器自带 Ctrl+P 即可
+  }
+});
+
+// === 打印/PDF：把 document.title 改为案例标题，浏览器会以此作为 PDF 默认文件名 ===
+let _originalTitle = document.title;
+printBtn.onclick=()=>{
+  if(!currentNo) return;
+  const d = DATA.find(x=>x.no===currentNo);
+  // 清洗 Windows 文件名不允许的字符：\ / : * ? " < > |
+  const cleanTitle = d.title.replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g,' ').trim();
+  document.title = `税务案例${d.no}_${cleanTitle}`;
+  window.print();
+};
+// 打印结束（或用户取消）后再还原标题——保证另存PDF对话框期间用的是新标题
+window.addEventListener('afterprint', ()=>{
+  document.title = _originalTitle;
+});
+
+// === 下载图片：自构造内联样式 HTML → SVG → Canvas → PNG，规避 CSS 变量/字体加载问题 ===
+
+// === 搜索 ===
+searchInput.addEventListener('input',e=>{keyword=e.target.value;render();});
+clearBtn.onclick=()=>{
+  keyword='';searchInput.value='';activeCat='全部';
+  document.querySelectorAll('#filters .tag').forEach((t,i)=>t.classList.toggle('active',i===0));
+  render();
+};
+
+// === 移动端菜单 ===
+menuToggle.onclick=()=>sidebar.classList.toggle('show');
+
+// === PC 端目录栏 收起/展开 ===
+const sidebarCollapse = document.getElementById('sidebarCollapse');
+const SIDEBAR_KEY = 'sidebar_hidden';
+function applySidebarState(hidden){
+  document.body.classList.toggle('sidebar-hidden', hidden);
+  sidebarCollapse.textContent = hidden ? '›' : '‹';
+  sidebarCollapse.title = hidden ? '展开目录' : '收起目录';
+}
+applySidebarState(localStorage.getItem(SIDEBAR_KEY) === 'true');
+sidebarCollapse.onclick = () => {
+  const hidden = !document.body.classList.contains('sidebar-hidden');
+  applySidebarState(hidden);
+  localStorage.setItem(SIDEBAR_KEY, hidden);
+};
+
+renderOutline();
+render();
+
+// ========== AI 助手浮动窗 ==========
+const aiFloat = document.getElementById('aiFloat');
+const aiToggle = document.getElementById('aiToggle');
+const aiClose = document.getElementById('aiClose');
+const aiMessages = document.getElementById('aiMessages');
+const aiInput = document.getElementById('aiInput');
+const aiSend = document.getElementById('aiSend');
+
+let aiThinking = false;
+
+aiToggle.onclick = () => {
+  aiFloat.classList.remove('collapsed');
+  aiFloat.classList.add('expanded');
+  aiInput.focus();
+};
+aiClose.onclick = () => {
+  aiFloat.classList.remove('expanded');
+  aiFloat.classList.add('collapsed');
+};
+
+// 清屏按钮
+const aiClear = document.getElementById('aiClear');
+aiClear.onclick = () => {
+  aiMessages.innerHTML = `
+    <div class="ai-welcome">
+      <b>👋 你好！</b><br>
+      我是你的税务知识库助手<br>
+      输入问题，我会从 <b>30+</b> 个案例中<br>
+      为你找到最相关的答案
+    </div>
+  `;
+};
+
+// 联网模式切换
+const aiModeSwitch = document.getElementById('aiModeSwitch');
+const aiModeLabel = document.getElementById('aiModeLabel');
+const aiConfigBtn = document.getElementById('aiConfigBtn');
+
+// 读取保存的模式
+const savedMode = localStorage.getItem('ai_network_mode');
+if (savedMode === 'true') {
+  aiModeSwitch.checked = true;
+  aiModeLabel.textContent = '本地 + 联网';
+}
+
+aiModeSwitch.onchange = () => {
+  const isNetwork = aiModeSwitch.checked;
+  aiModeLabel.textContent = isNetwork ? '本地 + 联网' : '本地知识库';
+  localStorage.setItem('ai_network_mode', isNetwork);
+  if (isNetwork) {
+    addAiMsg('🔌 已开启联网模式。我会先搜索本地知识库，再通过网络补充最新信息。', 'ai');
+  } else {
+    addAiMsg('📚 已切换到本地模式。仅基于知识库内的案例进行回答。', 'ai');
+  }
+};
+
+// API Key 配置面板
+let aiConfigPanel = null;
+aiConfigBtn.onclick = () => {
+  if (!aiConfigPanel) {
+    aiConfigPanel = document.createElement('div');
+    aiConfigPanel.className = 'ai-config-panel';
+    aiConfigPanel.innerHTML = `
+      <input type="password" id="aiApiKey" placeholder="API Key（如 sk-xxx）" autocomplete="off">
+      <input type="text" id="aiApiEndpoint" placeholder="API Endpoint（推荐填国内可访问的地址）" autocomplete="off">
+      <input type="text" id="aiApiModel" placeholder="模型名称（如 deepseek-chat / moonshot-v1-8k）" autocomplete="off">
+      <div style="font-size:11px;color:var(--ink-soft);line-height:1.6;margin-bottom:8px">
+        <b style="color:var(--accent)">⚠️ 国内用户必读：</b><br>
+        • <b>OpenAI / Claude 官方 API 国内无法直连</b>，且浏览器有 CORS 限制<br>
+        • 推荐使用国内服务商（均兼容 OpenAI 格式）：<br>
+        &nbsp;&nbsp;◦ <b>DeepSeek</b>：endpoint = <code>https://api.deepseek.com/v1/chat/completions</code>，model = <code>deepseek-chat</code><br>
+        &nbsp;&nbsp;◦ <b>Kimi(月之暗面)</b>：endpoint = <code>https://api.moonshot.cn/v1/chat/completions</code>，model = <code>moonshot-v1-8k</code><br>
+        &nbsp;&nbsp;◦ <b>智谱 GLM</b>：endpoint = <code>https://open.bigmodel.cn/api/paas/v4/chat/completions</code>，model = <code>glm-4-flash</code>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="ai-config-hint">Key/Endpoint/模型 仅保存在本地浏览器</span>
+        <button class="ai-config-save" id="aiSaveKey">保存</button>
+      </div>
+    `;
+    aiPanel.insertBefore(aiConfigPanel, aiPanel.querySelector('.ai-input-wrap'));
+    document.getElementById('aiSaveKey').onclick = () => {
+      const key = document.getElementById('aiApiKey').value.trim();
+      const endpoint = document.getElementById('aiApiEndpoint').value.trim();
+      const model = document.getElementById('aiApiModel').value.trim();
+      if (key) {
+        localStorage.setItem('ai_api_key', key);
+        if (endpoint) localStorage.setItem('ai_api_endpoint', endpoint);
+        else localStorage.removeItem('ai_api_endpoint');
+        if (model) localStorage.setItem('ai_api_model', model);
+        else localStorage.removeItem('ai_api_model');
+        aiConfigPanel.classList.remove('show');
+        addAiMsg('✅ 配置已保存。<br>endpoint：<code>' + escapeHtml(endpoint || '(默认 OpenAI)') + '</code><br>model：<code>' + escapeHtml(model || '(默认 gpt-4o-mini)') + '</code><br>现在发送问题即可联网。', 'ai');
+      } else {
+        addAiMsg('⚠️ 请填写 API Key 后再保存。', 'ai');
+      }
+    };
+  }
+  aiConfigPanel.classList.toggle('show');
+  if (aiConfigPanel.classList.contains('show')) {
+    const savedKey = localStorage.getItem('ai_api_key');
+    const savedEndpoint = localStorage.getItem('ai_api_endpoint');
+    const savedModel = localStorage.getItem('ai_api_model');
+    if (savedKey) document.getElementById('aiApiKey').value = savedKey;
+    if (savedEndpoint) document.getElementById('aiApiEndpoint').value = savedEndpoint;
+    if (savedModel) document.getElementById('aiApiModel').value = savedModel;
+  }
+};
+
+function addAiMsg(text, from) {
+  const div = document.createElement('div');
+  div.className = 'ai-msg ' + from;
+  div.innerHTML = text;
+  aiMessages.appendChild(div);
+  aiMessages.scrollTop = aiMessages.scrollHeight;
+  return div;
+}
+
+function buildCardRef(no, title) {
+  return `<span class="card-ref" data-no="${no}"><span class="ref-no">#${no}</span> ${title}</span>`;
+}
+
+// 本地检索引擎
+function searchCards(query) {
+  const kw = query.trim().toLowerCase();
+  if (!kw) return [];
+  return DATA.filter(d => {
+    const blob = (d.title + d.q + d.a + d.tags.join(' ') + d.cat + (d.detail || []).join(' ') + (d.law || '')).toLowerCase();
+    return blob.includes(kw);
+  });
+}
+
+// 智能分词检索：按空格分词，匹配度更高
+function smartSearch(query) {
+  const kw = query.trim();
+  if (!kw) return [];
+  const terms = kw.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+  return DATA.map(d => {
+    const blob = (d.title + ' ' + d.q + ' ' + d.a + ' ' + d.tags.join(' ') + ' ' + d.cat + ' ' + (d.detail || []).join(' ') + ' ' + (d.law || '')).toLowerCase();
+    let score = 0;
+    terms.forEach(t => {
+      if (blob.includes(t)) score++;
+      // 标题匹配权重更高
+      if ((d.title + ' ' + d.q).toLowerCase().includes(t)) score += 2;
+    });
+    return { card: d, score };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.card);
+}
+
+// 生成本地模拟回答
+function generateLocalAnswer(query, cards) {
+  if (cards.length === 0) {
+    return `抱歉，知识库中暂未找到与「${escapeHtml(query)}」直接相关的案例。<br><br>💡 建议尝试以下关键词：招待费、年终奖、视同销售、进项抵扣、加计扣除、资产损失、印花税、土地增值税等。`;
+  }
+  if (cards.length === 1) {
+    const c = cards[0];
+    return `根据知识库检索，找到 1 个相关案例：<br><br>${c.a}<br><br>📎 相关卡片：${buildCardRef(c.no, c.title)}`;
+  }
+  if (cards.length <= 3) {
+    let html = `根据知识库检索，找到 ${cards.length} 个相关案例：<br><br>`;
+    cards.forEach((c, i) => {
+      html += `<b>${i + 1}.</b> ${c.a}<br><br>`;
+    });
+    html += `📎 相关卡片：` + cards.map(c => buildCardRef(c.no, c.title)).join(' ');
+    return html;
+  }
+  // 4+ 条：按税种归类
+  const byCat = {};
+  cards.forEach(c => {
+    if (!byCat[c.cat]) byCat[c.cat] = [];
+    byCat[c.cat].push(c);
+  });
+  let html = `根据知识库检索，共找到 ${cards.length} 个相关案例，涉及 ${Object.keys(byCat).length} 个税种：<br><br>`;
+  Object.entries(byCat).forEach(([cat, list]) => {
+    html += `<b>▸ ${cat}</b>（${list.length} 例）：${list.map(c => buildCardRef(c.no, c.title)).join(' ')}<br>`;
+  });
+  html += `<br>💡 点击上方卡片编号可直接查看详情。`;
+  return html;
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+async function handleAiSend() {
+  const q = aiInput.value.trim();
+  if (!q || aiThinking) return;
+  aiInput.value = '';
+  addAiMsg(escapeHtml(q), 'user');
+
+  aiThinking = true;
+  aiSend.disabled = true;
+  const thinkingMsg = addAiMsg('<span class="thinking">正在检索知识库</span>', 'ai');
+
+  // 模拟异步延迟，让 UI 更自然
+  await new Promise(r => setTimeout(r, 600));
+
+  const cards = smartSearch(q);
+  let answer = generateLocalAnswer(q, cards);
+
+  // 如果开启联网模式，尝试补充网络信息
+  if (aiModeSwitch.checked) {
+    thinkingMsg.innerHTML = '<span class="thinking">正在联网补充信息</span>';
+    try {
+      const networkResult = await callRealAI(q, cards);
+      if (networkResult) {
+        answer += '<br><br>🌐 <b>网络补充：</b><br>' + networkResult;
+      }
+    } catch (e) {
+      answer += '<br><br>⚠️ 联网补充失败：' + escapeHtml(e.message);
+    }
+  }
+
+  thinkingMsg.innerHTML = answer;
+  aiMessages.scrollTop = aiMessages.scrollHeight;
+
+  // 绑定卡片点击事件
+  thinkingMsg.querySelectorAll('.card-ref').forEach(el => {
+    el.onclick = () => {
+      const no = el.dataset.no;
+      openModal(no);
+      // 高亮左侧大纲
+      document.querySelectorAll('.outline-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.no === no);
+      });
+      // 滚动到对应卡片
+      const cardEl = document.querySelector(`.card[data-no="${no}"]`);
+      if (cardEl) {
+        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        cardEl.style.transition = 'box-shadow 0.3s';
+        cardEl.style.boxShadow = '0 0 0 3px var(--accent), var(--shadow-hover)';
+        setTimeout(() => { cardEl.style.boxShadow = ''; }, 2000);
+      }
+    };
+  });
+
+  aiThinking = false;
+  aiSend.disabled = false;
+  aiInput.focus();
+}
+
+aiSend.onclick = handleAiSend;
+aiInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleAiSend();
+});
+
+// 真实 AI API 接口（支持 OpenAI / Claude / 自定义代理）
+async function callRealAI(query, context) {
+  const API_KEY = localStorage.getItem('ai_api_key');
+  if (!API_KEY) {
+    throw new Error('未配置 API Key，请点击 ⚙ 按钮配置');
+  }
+
+  // 从 Key 格式自动推断服务商
+  const isClaude = API_KEY.startsWith('sk-ant-');
+
+  // 端点
+  let endpoint = localStorage.getItem('ai_api_endpoint');
+  if (!endpoint) {
+    endpoint = isClaude
+      ? 'https://api.anthropic.com/v1/messages'
+      : 'https://api.openai.com/v1/chat/completions';
+  }
+
+  // 模型（用户可自定义；否则按服务商给默认）
+  let model = localStorage.getItem('ai_api_model');
+  if (!model) {
+    if (isClaude) model = 'claude-3-5-haiku-20241022';
+    else if (endpoint.includes('deepseek')) model = 'deepseek-chat';
+    else if (endpoint.includes('moonshot')) model = 'moonshot-v1-8k';
+    else if (endpoint.includes('bigmodel')) model = 'glm-4-flash';
+    else if (endpoint.includes('dashscope')) model = 'qwen-turbo';
+    else model = 'gpt-4o-mini';
+  }
+
+  // 系统提示词
+  const systemPrompt = `你是一位资深中国税务专家。用户正在查询税务问题，以下是本地知识库中检索到的相关案例（供你参考，不要重复）：
+
+${context.map((c, i) => `${i + 1}. [${c.cat} #${c.no}] ${c.title}\n问题：${c.q}\n答案：${stripHtml(c.a)}`).join('\n\n')}
+
+请基于以上案例，结合你的专业知识，给出简洁、准确的补充回答。如果案例已足够完整，可直接说明"本地知识库已覆盖"。`;
+
+  let res, data, content;
+
+  try {
+    if (isClaude) {
+      res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: model,
+          max_tokens: 1024,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: query }]
+        })
+      });
+      data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || `HTTP ${res.status}`);
+      content = data.content?.[0]?.text || '无返回内容';
+    } else {
+      res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + API_KEY
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: query }
+          ],
+          temperature: 0.3,
+          max_tokens: 1024
+        })
+      });
+      data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || data.message || `HTTP ${res.status}`);
+      content = data.choices?.[0]?.message?.content || '无返回内容';
+    }
+    return content;
+  } catch (err) {
+    // 区分网络错误（CORS/无法连接）和 API 错误
+    if (err instanceof TypeError && err.message.includes('fetch')) {
+      throw new Error(`网络请求失败（可能原因：CORS 跨域被拦截 / 该 API 国内无法直连 / endpoint 地址错误）。当前 endpoint：${endpoint}`);
+    }
+    throw new Error(`${err.message}（model=${model}）`);
+  }
+}
+
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+// ========== AI 浮动窗初始化：默认收起（不打扰阅读） ==========
+(function initAiFloat() {
+  aiFloat.classList.add('collapsed');
+  aiFloat.classList.remove('expanded');
+})();
+
+// ========== 常用问题快捷按钮 ==========
+document.querySelectorAll('.ai-quick-btn').forEach(btn => {
+  btn.onclick = () => {
+    aiInput.value = btn.dataset.q;
+    handleAiSend();
+  };
+});
+
+// ========== 对话历史持久化 ==========
+const AI_HISTORY_KEY = 'ai_conversation_history';
+const AI_HISTORY_MAX = 20;
+
+function saveAiHistory() {
+  const msgs = [];
+  aiMessages.querySelectorAll('.ai-msg').forEach(div => {
+    if (!div.classList.contains('ai-welcome')) {
+      msgs.push({
+        from: div.classList.contains('user') ? 'user' : 'ai',
+        html: div.innerHTML
+      });
+    }
+  });
+  if (msgs.length > 0) {
+    localStorage.setItem(AI_HISTORY_KEY, JSON.stringify(msgs.slice(-AI_HISTORY_MAX)));
+  } else {
+    localStorage.removeItem(AI_HISTORY_KEY);
+  }
+}
+
+function loadAiHistory() {
+  try {
+    const raw = localStorage.getItem(AI_HISTORY_KEY);
+    if (!raw) return;
+    const msgs = JSON.parse(raw);
+    if (!msgs.length) return;
+    // 清空欢迎语，加载历史
+    aiMessages.innerHTML = '';
+    msgs.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'ai-msg ' + m.from;
+      div.innerHTML = m.html;
+      aiMessages.appendChild(div);
+    });
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  } catch (e) { /* ignore */ }
+}
+
+// 在每次 AI 回复后保存历史
+const _origAddAiMsg = addAiMsg;
+addAiMsg = function(text, from) {
+  const div = _origAddAiMsg(text, from);
+  // 延迟保存，等动画和内容稳定
+  setTimeout(saveAiHistory, 100);
+  return div;
+};
+
+// 展开 AI 面板时加载历史
+aiToggle.onclick = () => {
+  aiFloat.classList.remove('collapsed');
+  aiFloat.classList.add('expanded');
+  loadAiHistory();
+  aiInput.focus();
+};
+
+// ========== PWA：Service Worker 注册 ==========
+const SW_CODE = `
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open('tax-kb-v1').then(cache => {
+      return cache.addAll(['./']);
+    })
+  );
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(self.clients.claim());
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./')))
+  );
+});
+`;
+
+if ('serviceWorker' in navigator) {
+  const swBlob = new Blob([SW_CODE], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+
+// ========== PWA：安装引导 ==========
+let pwaDeferredPrompt = null;
+const pwaBanner = document.getElementById('pwaBanner');
+const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+const pwaCloseBtn = document.getElementById('pwaCloseBtn');
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  pwaDeferredPrompt = e;
+  if (!localStorage.getItem('pwa_banner_dismissed')) {
+    pwaBanner.classList.add('show');
+  }
+});
+
+pwaInstallBtn.onclick = async () => {
+  if (pwaDeferredPrompt) {
+    pwaDeferredPrompt.prompt();
+    const { outcome } = await pwaDeferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      pwaBanner.classList.remove('show');
+      localStorage.setItem('pwa_installed', 'true');
+    }
+    pwaDeferredPrompt = null;
+  } else {
+    // 如果没有 deferred prompt，显示手动安装提示
+    addAiMsg('📱 请使用浏览器菜单中的「添加到主屏幕」功能安装。iOS：Safari 分享按钮 → 添加到主屏幕；Android：Chrome 菜单 → 安装应用。', 'ai');
+    aiFloat.classList.remove('collapsed');
+    aiFloat.classList.add('expanded');
+  }
+};
+
+pwaCloseBtn.onclick = () => {
+  pwaBanner.classList.remove('show');
+  localStorage.setItem('pwa_banner_dismissed', 'true');
+};
+
+// 已安装则不再显示
+if (localStorage.getItem('pwa_installed') || window.matchMedia('(display-mode: standalone)').matches) {
+  pwaBanner.classList.remove('show');
+}
+</script>
+</body>
+</html>
