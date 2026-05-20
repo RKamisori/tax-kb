@@ -381,6 +381,31 @@
   .ai-msg.ai .card-ref .ref-no{font-family:"Courier New",monospace;font-size:11px}
   .ai-msg .thinking{color:var(--ink-soft);font-style:italic}
   .ai-msg .thinking::after{content:"";display:inline-block;width:14px;text-align:left;animation:aiDots 1.4s infinite}
+  /* Markdown 渲染样式 */
+  .ai-msg.ai .md-content h1,.ai-msg.ai .md-content h2,.ai-msg.ai .md-content h3{margin:12px 0 8px;color:var(--accent);font-weight:700;line-height:1.4}
+  .ai-msg.ai .md-content h1{font-size:16px}
+  .ai-msg.ai .md-content h2{font-size:15px}
+  .ai-msg.ai .md-content h3{font-size:14px}
+  .ai-msg.ai .md-content p{margin:0 0 8px;line-height:1.8}
+  .ai-msg.ai .md-content ul,.ai-msg.ai .md-content ol{margin:8px 0;padding-left:20px}
+  .ai-msg.ai .md-content li{margin:4px 0;line-height:1.7}
+  .ai-msg.ai .md-content code{background:var(--bg-2);padding:2px 6px;border-radius:4px;font-size:12px;font-family:"Courier New",monospace;color:var(--accent-2)}
+  .ai-msg.ai .md-content pre{background:var(--bg-2);padding:12px;border-radius:8px;overflow-x:auto;margin:10px 0;border:1px solid var(--line)}
+  .ai-msg.ai .md-content pre code{background:none;padding:0;color:var(--ink)}
+  .ai-msg.ai .md-content blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:8px 12px;background:var(--bg);color:var(--ink-soft);font-size:12.5px}
+  .ai-msg.ai .md-content table{border-collapse:collapse;margin:10px 0;font-size:12.5px;width:100%}
+  .ai-msg.ai .md-content th,.ai-msg.ai .md-content td{border:1px solid var(--line);padding:6px 10px;text-align:left}
+  .ai-msg.ai .md-content th{background:var(--bg-2);font-weight:600;color:var(--accent)}
+  .ai-msg.ai .md-content hr{border:none;border-top:1px solid var(--line);margin:14px 0}
+  .ai-msg.ai .md-content strong{color:var(--accent);font-weight:700}
+  .ai-msg.ai .md-content a{color:var(--accent);text-decoration:underline}
+  .ai-msg.ai .md-content img{max-width:100%;border-radius:6px;margin:8px 0}
+  /* 复制时保留原始 Markdown */
+  .ai-msg.ai .md-raw{display:none}
+  .ai-msg.ai .md-content{user-select:text}
+  /* 选中复制时包含原始 markdown */
+  .ai-msg.ai{position:relative}
+  .ai-msg.ai::after{content:attr(data-md);position:absolute;left:-9999px;top:0;white-space:pre-wrap}
   @keyframes aiDots{0%{content:"."}33%{content:".."}66%{content:"..."}}
   .ai-input-wrap{
     display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);
@@ -512,9 +537,9 @@
   <div class="sidebar-header">
     <div class="logo-row">
       <div class="mini-logo">税</div>
-      <div class="title">高频疑难税务知识库</div>
+      <div class="title">企业财税问题知识库</div>
     </div>
-    <div class="subtitle">基于 <b>魏禾《900例》</b> 框架</div>
+    <div class="subtitle">基于<b><税法政策+经验总结></b></div>
     <span class="total-pill">共 <span id="sidebarTotal">0</span> 例 · Demo</span>
   </div>
   <nav class="outline-nav" id="outlineNav"></nav>
@@ -525,8 +550,8 @@
 <div class="wrap">
   <div class="hero">
     <div>
-      <h1>企业高频疑难税务问题知识库</h1>
-      <div class="sub">基于 <b>魏禾《企业高频疑难税务问题900例》</b> 框架整理 · 示范Demo · 共 <span id="totalCount">0</span> 例</div>
+      <h1>企业财税问题知识库</h1>
+      <div class="sub">基于<b><税法政策+经验总结></b>整理 · 示范Demo · 共 <span id="totalCount">0</span> 例</div>
       <div class="toolbar">
         <div class="search-box">
           <input id="searchInput" type="text" placeholder="搜索案例标题、问题、关键词…比如：招待费、年终奖、视同销售">
@@ -546,7 +571,7 @@
   <div class="grid" id="grid"></div>
 
   <footer>
-    📚 本知识库为基于公开税法+《魏禾900例》框架的<b>示范Demo</b>·内容仅供学习参考·实际业务请以最新法规为准 · 由 <b>CC - Kamisori</b> 制作
+    📚 本知识库为基于<b><税法政策+经验总结></b>的示范Demo·内容仅供学习参考·实际业务请以最新法规为准 · 由 <b>CC - Kamisori</b> 制作
   </footer>
 </div>
 </main>
@@ -579,7 +604,7 @@
     <div class="ai-header">
       <div>
         <div class="ai-title">🤖 AI 税务助手</div>
-        <div class="ai-sub">基于知识库智能检索</div>
+        <div class="ai-sub">基于知识库与网络知识智能检索</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="ai-header-btn" id="aiClear" title="清屏">🗑</button>
@@ -1129,12 +1154,16 @@ aiConfigBtn.onclick = () => {
         &nbsp;&nbsp;◦ <b>Kimi(月之暗面)</b>：endpoint = <code>https://api.moonshot.cn/v1/chat/completions</code>，model = <code>moonshot-v1-8k</code><br>
         &nbsp;&nbsp;◦ <b>智谱 GLM</b>：endpoint = <code>https://open.bigmodel.cn/api/paas/v4/chat/completions</code>，model = <code>glm-4-flash</code>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span class="ai-config-hint">Key/Endpoint/模型 仅保存在本地浏览器</span>
+      <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px">
+        <span class="ai-config-hint" style="margin-right:auto">Key/Endpoint/模型 仅保存在本地浏览器</span>
+        <button class="ai-config-save" id="aiCancelKey" style="background:var(--ink-soft)">取消</button>
         <button class="ai-config-save" id="aiSaveKey">保存</button>
       </div>
     `;
     aiPanel.insertBefore(aiConfigPanel, aiPanel.querySelector('.ai-input-wrap'));
+    document.getElementById('aiCancelKey').onclick = () => {
+      aiConfigPanel.classList.remove('show');
+    };
     document.getElementById('aiSaveKey').onclick = () => {
       const key = document.getElementById('aiApiKey').value.trim();
       const endpoint = document.getElementById('aiApiEndpoint').value.trim();
@@ -1163,13 +1192,83 @@ aiConfigBtn.onclick = () => {
   }
 };
 
-function addAiMsg(text, from) {
+function addAiMsg(text, from, rawMd) {
   const div = document.createElement('div');
   div.className = 'ai-msg ' + from;
-  div.innerHTML = text;
+  // AI 回复：渲染 Markdown + 保留原始文本用于复制
+  if (from === 'ai' && rawMd) {
+    div.setAttribute('data-md', rawMd);
+    div.innerHTML = '<div class="md-content">' + renderMarkdown(text) + '</div>';
+  } else if (from === 'ai') {
+    // 没有 rawMd 时也尝试渲染（兼容旧调用）
+    div.setAttribute('data-md', text);
+    div.innerHTML = '<div class="md-content">' + renderMarkdown(text) + '</div>';
+  } else {
+    div.innerHTML = text;
+  }
   aiMessages.appendChild(div);
   aiMessages.scrollTop = aiMessages.scrollHeight;
   return div;
+}
+
+// 简易 Markdown 渲染器
+function renderMarkdown(md) {
+  let html = md;
+  // 转义 HTML 特殊字符（代码块内）
+  const codeBlocks = [];
+  html = html.replace(/```([\s\S]*?)```/g, (m, code) => {
+    codeBlocks.push(code);
+    return '\x00CODE' + (codeBlocks.length - 1) + '\x00';
+  });
+  html = html.replace(/`([^`]+)`/g, (m, code) => {
+    codeBlocks.push(code);
+    return '\x00INLINE' + (codeBlocks.length - 1) + '\x00';
+  });
+  // 标题
+  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+  // 粗体、斜体
+  html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  // 删除线
+  html = html.replace(/~~(.*?)~~/g, '<del>$1</del>');
+  // 引用
+  html = html.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
+  // 无序列表
+  html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => '<ul>' + m + '</ul>');
+  // 有序列表
+  html = html.replace(/^\d+\.\s+(.*$)/gim, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => {
+    if (m.includes('<ul>')) return m;
+    return '<ol>' + m + '</ol>';
+  });
+  // 水平线
+  html = html.replace(/^---$/gim, '<hr>');
+  // 表格
+  html = html.replace(/\|(.+)\|\n\|[-:\s|]+\|\n((?:\|.+\|\n?)+)/g, (m, header, rows) => {
+    const ths = header.split('|').map(h => h.trim()).filter(h => h).map(h => '<th>' + h + '</th>').join('');
+    const trs = rows.trim().split('\n').map(row => {
+      const tds = row.split('|').map(c => c.trim()).filter(c => c).map(c => '<td>' + c + '</td>').join('');
+      return '<tr>' + tds + '</tr>';
+    }).join('');
+    return '<table><thead><tr>' + ths + '</tr></thead><tbody>' + trs + '</tbody></table>';
+  });
+  // 链接
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  // 图片
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+  // 段落（换行转 <br>）
+  html = html.replace(/\n/g, '<br>');
+  // 恢复代码块
+  html = html.replace(/\x00CODE(\d+)\x00/g, (m, i) => '<pre><code>' + escapeHtml(codeBlocks[i]) + '</code></pre>');
+  html = html.replace(/\x00INLINE(\d+)\x00/g, (m, i) => '<code>' + escapeHtml(codeBlocks[i]) + '</code>');
+  // 清理多余的 <br>
+  html = html.replace(/<br><(h[123]|ul|ol|blockquote|pre|table|hr)/g, '<$1');
+  html = html.replace(/<\/(h[123]|ul|ol|blockquote|pre|table|hr)><br>/g, '</$1>');
+  return html;
 }
 
 function buildCardRef(no, title) {
@@ -1253,6 +1352,7 @@ async function handleAiSend() {
 
   const cards = smartSearch(q);
   let answer = generateLocalAnswer(q, cards);
+  let rawMd = answer; // 保留原始 markdown 用于复制
 
   // 如果开启联网模式，尝试补充网络信息
   if (aiModeSwitch.checked) {
@@ -1260,15 +1360,24 @@ async function handleAiSend() {
     try {
       const networkResult = await callRealAI(q, cards);
       if (networkResult) {
-        answer += '<br><br>🌐 <b>网络补充：</b><br>' + networkResult;
+        const networkHtml = '\n\n🌐 **网络补充：**\n\n' + networkResult;
+        answer += networkHtml;
+        rawMd += networkHtml;
       }
     } catch (e) {
-      answer += '<br><br>⚠️ 联网补充失败：' + escapeHtml(e.message);
+      const errHtml = '\n\n⚠️ 联网补充失败：' + e.message;
+      answer += errHtml;
+      rawMd += errHtml;
     }
   }
 
-  thinkingMsg.innerHTML = answer;
+  // 用 Markdown 渲染 + 保留原始文本
+  thinkingMsg.setAttribute('data-md', rawMd);
+  thinkingMsg.innerHTML = '<div class="md-content">' + renderMarkdown(answer) + '</div>';
   aiMessages.scrollTop = aiMessages.scrollHeight;
+
+  // 手动保存历史（直接修改 innerHTML 不会触发 addAiMsg 的保存逻辑）
+  saveAiHistory();
 
   // 绑定卡片点击事件
   thinkingMsg.querySelectorAll('.card-ref').forEach(el => {
@@ -1293,6 +1402,9 @@ async function handleAiSend() {
   aiThinking = false;
   aiSend.disabled = false;
   aiInput.focus();
+
+  // 再次保存历史（确保所有状态更新后保存）
+  saveAiHistory();
 }
 
 aiSend.onclick = handleAiSend;
@@ -1417,9 +1529,12 @@ function saveAiHistory() {
   const msgs = [];
   aiMessages.querySelectorAll('.ai-msg').forEach(div => {
     if (!div.classList.contains('ai-welcome')) {
+      const from = div.classList.contains('user') ? 'user' : 'ai';
+      const rawMd = div.getAttribute('data-md');
       msgs.push({
-        from: div.classList.contains('user') ? 'user' : 'ai',
-        html: div.innerHTML
+        from: from,
+        html: div.innerHTML,
+        md: rawMd || ''
       });
     }
   });
@@ -1441,7 +1556,13 @@ function loadAiHistory() {
     msgs.forEach(m => {
       const div = document.createElement('div');
       div.className = 'ai-msg ' + m.from;
-      div.innerHTML = m.html;
+      if (m.from === 'ai' && m.md) {
+        div.setAttribute('data-md', m.md);
+        // 重新渲染 Markdown，确保样式正确
+        div.innerHTML = '<div class="md-content">' + renderMarkdown(m.md) + '</div>';
+      } else {
+        div.innerHTML = m.html;
+      }
       aiMessages.appendChild(div);
     });
     aiMessages.scrollTop = aiMessages.scrollHeight;
@@ -1450,8 +1571,8 @@ function loadAiHistory() {
 
 // 在每次 AI 回复后保存历史
 const _origAddAiMsg = addAiMsg;
-addAiMsg = function(text, from) {
-  const div = _origAddAiMsg(text, from);
+addAiMsg = function(text, from, rawMd) {
+  const div = _origAddAiMsg(text, from, rawMd);
   // 延迟保存，等动画和内容稳定
   setTimeout(saveAiHistory, 100);
   return div;
